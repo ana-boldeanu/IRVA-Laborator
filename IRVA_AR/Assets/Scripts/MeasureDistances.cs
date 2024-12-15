@@ -95,10 +95,17 @@ public class MeasureDistances : MonoBehaviour
          * and the canvas always follows the phone screen),
          * so we need to update the position on screen for each distance displayed.
          */
-        for (int i = 0; i < distances.Count; i++)
+        for (int i = 0; i < distances.Count; ++i)
         {
             /* TODO 2.3 Update text position - SOLVE THIS AFTER TESTING 2.1 - 2.2 AND NOTICE THE DIFFERENCES */
-            //distances[i].transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+            Transform currentCube = points[i].transform;
+            Transform nextCube = points[i + 1].transform;
+
+            Vector3 lineCenterPosition = new Vector3(currentCube.position.x + (nextCube.position.x - currentCube.position.x) / 2
+                , currentCube.position.y + (nextCube.position.y - currentCube.position.y) / 2
+                , currentCube.position.z + (nextCube.position.z - currentCube.position.z) / 2);
+
+            distances[i].transform.position = Camera.main.WorldToScreenPoint(lineCenterPosition);
         }
 
         if (!TryGetTouchPosition(out Vector2 touchPosition))
@@ -120,41 +127,48 @@ public class MeasureDistances : MonoBehaviour
             {
                 /* Draw a line between the last two added points */
                 /* TODO 1.1 Instantiate linePrefab */
-                GameObject line = new GameObject();
-                /* TODO 1.2 Set position at half the distance between the last two added points */
-                line.transform.position = new Vector3(points[points.Count - 1].transform.position.x
-                    + (points[points.Count - 2].transform.position.x
-                    - points[points.Count - 1].transform.position.x) / 2,
-                    0, 0);
-                /* TODO 1.3 Set rotation: use LookAt function to make the line oriented between the two points */
-                
+                GameObject line = Instantiate(linePrefab);
 
-                /* TODO 1.4 Set scale: two fixed numbers on ox and oy axis, the distance between the two points on oz axis */
-                line.transform.localScale = new Vector3(0.5f, 0.5f, 0.0f); /* !0.5 can be changed to whatever value we want
-                                                                            * !In order to correctly, set the oz axis pay attention
-                                                                            * to the structure of the used prefab
-                                                                            */
+                /* TODO 1.2 Set position at half the distance between the last two added points */
+                Transform currentCube = points[points.Count - 1].transform;
+                Transform previousCube = points[points.Count - 2].transform;
+
+                line.transform.position = new Vector3(currentCube.position.x + (previousCube.position.x - currentCube.position.x) / 2
+                    , currentCube.position.y + (previousCube.position.y - currentCube.position.y) / 2
+                    , currentCube.position.z + (previousCube.position.z - currentCube.position.z) / 2);
+
+                /* TODO 1.3 Set rotation: use LookAt function to make the line oriented between the two points */
+                line.transform.LookAt(currentCube);
+
+                /* TODO 1.4 Set scale: two fixed numbers on ox and oy axis, the distance between the two points on oz axis 
+                 * !0.5 can be changed to whatever value we want. In order to correctly, set the oz axis pay attention to the structure of the used prefab */
+                float distanceBetweenCubes = Vector3.Distance(currentCube.position, previousCube.position);
+                line.transform.localScale = new Vector3(0.5f, 0.5f, distanceBetweenCubes / 0.05f);
 
                 /* TODO 1.5 Add an anchor to the line - SOLVE THIS AFTER TESTING 1.1 - 1.4 AND NOTICE THE DIFFERENCES */
-
+                line.AddComponent<ARAnchor>();
 
                 /* Show on each line the distance */
                 /* Instantiate textPrefab */
                 TMP_Text partialDistance = Instantiate(textPrefab);
+
                 /* Set the canvas as parent so that the text is displayed on screen */
                 partialDistance.transform.SetParent(parent.transform);
+
                 /* Set the position of the text on screen */
                 partialDistance.transform.position = Camera.main.WorldToScreenPoint(new Vector3(line.transform.position.x,
                     line.transform.position.y, line.transform.position.z));
+
                 /* TODO 2.1 Compute the distance between the last two added points */
-                float distance = 0;
+                float distance = distanceBetweenCubes;
+
                 /* TODO 2.2 Add the distance to our distances list */
-                partialDistance.text = "";
+                partialDistance.text = distance.ToString("0.00");
                 distances.Add(partialDistance);
 
                 /* TODO 3 Update the total distance */
-                distanceSum = 0;
-                totalDistance.text = "Total distance: ";
+                distanceSum += distance;
+                totalDistance.text = "Total distance: " + distanceSum.ToString("0.00");
             }
         }
     }
