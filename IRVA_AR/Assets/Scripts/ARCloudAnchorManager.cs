@@ -96,12 +96,10 @@ public class ARCloudAnchorManager : MonoBehaviour
         {
             anchorIdToResolve = result.CloudAnchorId;
             StartCoroutine(DisplayStatus("Anchor hosted successfully!"));
-            Debug.Log("Anchor hosted successfully!");
         }
         else
         {
             StartCoroutine(DisplayStatus("Error in hosting the anchor: " + result.CloudAnchorState));
-            Debug.Log(string.Format("Error in hosting the anchor: {0}", result.CloudAnchorState));
         }
     }
 
