@@ -63,7 +63,7 @@ public class ARCloudAnchorManager : MonoBehaviour
         if (quality != FeatureMapQuality.Insufficient)
         {
             /* TODO 3.2 Start the hosting process */
-            HostCloudAnchorPromise cloudAnchorPromise = arAnchorManager.HostCloudAnchorAsync(pendingHostAnchor, 365);
+            HostCloudAnchorPromise cloudAnchorPromise = arAnchorManager.HostCloudAnchorAsync(pendingHostAnchor, 1);
 
             /* Wait for the promise to solve (Hint! Pass the HostCloudAnchorPromise variable to the coroutine) */
             StartCoroutine(WaitHostingResult(cloudAnchorPromise));
