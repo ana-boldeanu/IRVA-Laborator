@@ -57,16 +57,16 @@ public class ARCloudAnchorManager : MonoBehaviour
     public void HostAnchor()
     {
         /* TODO 3.1 Get FeatureMapQuality */
-        FeatureMapQuality quality = new FeatureMapQuality();
+        FeatureMapQuality quality = arAnchorManager.EstimateFeatureMapQualityForHosting(GetCameraPose());
         StartCoroutine(DisplayStatus("HostAnchor call in progress. Feature Map Quality: " + quality));
 
         if (quality != FeatureMapQuality.Insufficient)
         {
             /* TODO 3.2 Start the hosting process */
-            HostCloudAnchorPromise cloudAnchor;
+            HostCloudAnchorPromise cloudAnchorPromise = arAnchorManager.HostCloudAnchorAsync(pendingHostAnchor, 365);
 
             /* Wait for the promise to solve (Hint! Pass the HostCloudAnchorPromise variable to the coroutine) */
-            StartCoroutine(WaitHostingResult());
+            StartCoroutine(WaitHostingResult(cloudAnchorPromise));
         }
     }
 
@@ -75,20 +75,45 @@ public class ARCloudAnchorManager : MonoBehaviour
         StartCoroutine(DisplayStatus("Resolve call in progress"));
 
         /* TODO 5 Start the resolve process and wait for the promise */
+        ResolveCloudAnchorPromise cloudAnchorPromise = arAnchorManager.ResolveCloudAnchorAsync(anchorIdToResolve);
 
+        StartCoroutine(WaitResolvingResult(cloudAnchorPromise));
     }
 
-    private IEnumerator WaitHostingResult()
+    private IEnumerator WaitHostingResult(HostCloudAnchorPromise hostingPromise)
     {
         /* TODO 3.3 Wait for the promise. Save the id if the hosting succeeded */
-        yield return new WaitForSeconds(1.0f);
+        yield return hostingPromise;
+
+        if (hostingPromise.State == PromiseState.Cancelled)
+        {
+            yield break;
+        }
+
+        var result = hostingPromise.Result;
+
+        if (result.CloudAnchorState == CloudAnchorState.Success)
+        {
+            anchorIdToResolve = result.CloudAnchorId;
+            StartCoroutine(DisplayStatus("Anchor hosted successfully!"));
+            Debug.Log("Anchor hosted successfully!");
+        }
+        else
+        {
+            StartCoroutine(DisplayStatus("Error in hosting the anchor: " + result.CloudAnchorState));
+            Debug.Log(string.Format("Error in hosting the anchor: {0}", result.CloudAnchorState));
+        }
     }
 
     private IEnumerator WaitResolvingResult(ResolveCloudAnchorPromise resolvePromise)
     {
         yield return resolvePromise;
 
-        if (resolvePromise.State == PromiseState.Cancelled) yield break;
+        if (resolvePromise.State == PromiseState.Cancelled)
+        {
+            yield break;
+        }
+
         var result = resolvePromise.Result;
 
         if (result.CloudAnchorState == CloudAnchorState.Success)

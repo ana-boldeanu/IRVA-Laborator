@@ -81,10 +81,10 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
             var hitPose = s_Hits[0].pose;
 
             /* TODO 2.1. Instantiate a new prefab on scene */
-            spawnedObject = new GameObject();
+            spawnedObject = Instantiate(prefab, hitPose.position, hitPose.rotation);
 
             /* TODO 2.2 Attach an anchor to the prefab */
-            ARAnchor anchor = new ARAnchor();
+            ARAnchor anchor = spawnedObject.AddComponent<ARAnchor>();
             spawnedObject.transform.parent = anchor.transform;
 
             /* Send the anchor to ARCloudAnchorManager */
@@ -102,7 +102,8 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
     public void RemovePlacement()
     {
         /* TODO 4 Remove the cube from screen */
-
+        Destroy(spawnedObject);
+        spawnedObject= null;
     }
 
     static List<ARRaycastHit> s_Hits = new List<ARRaycastHit>();
