@@ -15,7 +15,7 @@ public class ARRuntimeImageLibrary : MonoBehaviour
     void Start()
     {
         /* TODO 3.1 Download minimum one image from the internet */
-        var url = "your_link_for_the_image";
+        var url = "https://img.freepik.com/premium-photo/majestic-flying-fox-mid-air-close-up-fruit-bat-soaring-gracefully-through-forest-canopy_996993-66111.jpg";
         StartCoroutine(DownloadImage(url));
     }
 
@@ -40,25 +40,28 @@ public class ARRuntimeImageLibrary : MonoBehaviour
 
             /* TODO 3.2 Destroy the previous ARTrackedImageManager component. 
              * Hint! What's the difference between Destroy() and DestroyImmediate()? */
-
+            DestroyImmediate(gameObject.GetComponent<ARTrackedImageManager>());
 
             /* TODO 3.3 Attach a new ARTrackedImageManager component */
-            trackImageManager = new ARTrackedImageManager();
+            trackImageManager = gameObject.AddComponent<ARTrackedImageManager>();
 
             /* TODO 3.4 Create a new runtime library */
-
+            var library = trackImageManager.CreateRuntimeLibrary();
 
             /* TODO 3.5 Add the image to the database*/
-            
+            if (library is MutableRuntimeReferenceImageLibrary mutableLibrary)
+            {
+                mutableLibrary.ScheduleAddImageWithValidationJob(imageToAdd, "Image Name", 0.5f /* 50 cm */);
+            }
 
             /* Set the maximum number of moving images */
             trackImageManager.requestedMaxNumberOfMovingImages = 3;
 
             /* TODO 3.6 Set the new library as the reference library */
-            
+            trackImageManager.referenceLibrary = library;
 
             /* TODO 3.7 Enable the new ARTrackedImageManager component */
-            
+            trackImageManager.enabled = true;
 
             /* Attach the event handling */
             trackImageManager.trackedImagesChanged += OnTrackedImagesChanged;
@@ -71,7 +74,11 @@ public class ARRuntimeImageLibrary : MonoBehaviour
         {
             /* TODO 3.8 Instantiate a new object in scene so that it always follows the tracked image
              * Hint! Use SetParent() method */
-            
+            GameObject placedPrefab = Instantiate(m_PlacedPrefab);
+            placedPrefab.transform.localScale = new Vector3(2, 2, 2);
+            placedPrefab.transform.SetParent(trackedImage.gameObject.transform);
+            placedPrefab.transform.localPosition = new Vector3(0, 0, 0);
+            placedPrefab.transform.localRotation = new Quaternion(0, 0, 0, 1);
         }
 
         foreach (ARTrackedImage trackedImage in eventArgs.updated)
