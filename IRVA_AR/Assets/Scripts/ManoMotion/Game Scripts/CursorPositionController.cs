@@ -40,7 +40,8 @@ namespace AR_ManoMotion
                  *        -> Use screen.width & Screen.height to compute position in pixels
                  *        -> Z coord can be set to 0
                  */
-
+                HandInfo handInfo = ManomotionManager.Instance.Hand_infos[0].hand_info;
+                _cursorScreenPos = new Vector3(handInfo.tracking_info.palm_center.x * Screen.width, handInfo.tracking_info.palm_center.y * Screen.height, 0);
             }
 
             UpdateCursorPosition(_cursorScreenPos);

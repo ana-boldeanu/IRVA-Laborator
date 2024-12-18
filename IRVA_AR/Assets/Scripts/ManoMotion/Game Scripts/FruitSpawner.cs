@@ -55,7 +55,7 @@ namespace AR_ManoMotion
         {
             for (; ; )
             {
-                if (true) /* TODO 3.6 */
+                if (SpawnerActive) /* TODO 3.6 */
                 {
                     /* Get random values */
                     int randFruitIndex = Random.Range(0, fruitPrefabs.Count);
@@ -76,7 +76,7 @@ namespace AR_ManoMotion
 
                 }
 
-                float randSpawnTimer = Random.Range(MinSpawnRate, MaxSpawnRate); /* TODO 4.6 */
+                float randSpawnTimer = Random.Range(MinSpawnRate, MaxSpawnRate) / SpawnMultiplier; /* TODO 4.6 */
 
                 /* Wait until next spawn */
                 yield return new WaitForSeconds(randSpawnTimer);
