@@ -9,7 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79a1434fa36b71f468fbec1c0a4f6f71, type: 3}
-  m_Name: XRPluginProviderControllerData
+  m_Script: {fileID: 11500000, guid: 44820cf310472441e952b611b9f17c14, type: 3}
+  m_Name: XRLoader
   m_EditorClassIdentifier: 
-  <TargetVR>k__BackingField: 1
