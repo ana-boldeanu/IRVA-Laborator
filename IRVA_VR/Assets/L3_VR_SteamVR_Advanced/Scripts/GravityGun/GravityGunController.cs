@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using Valve.VR;
 using Valve.VR.InteractionSystem;
 
 namespace L3_VR_SteamVR_Advanced.Scripts.GravityGun
@@ -20,7 +21,7 @@ namespace L3_VR_SteamVR_Advanced.Scripts.GravityGun
             // Listen to events related to grabbing & releasing the gravity gun.
             gunInteractable.onAttachedToHand += OnGunGrabbedInHand;
             gunInteractable.onDetachedFromHand += OnGunReleasedFromHand;
-            
+
             //  TODO 3.1 : Setup input for the gravity gun.
             //             You'll have to create at least 2 new actions and bindings first.
             //             With these, write input logic to drive the gravity gun logic.
@@ -29,6 +30,8 @@ namespace L3_VR_SteamVR_Advanced.Scripts.GravityGun
             //             - On touch release ------> call `TossObject` method.
             //                  - Note: "touch release" means when the touch input goes from `true` to false`.
             //             - Use either the polling method (Update) or an event-based mechanism (OnEnable / OnDisable).
+            SteamVR_Actions._default.X_Pressed.onChange += OnXPressedChanged;
+            SteamVR_Actions._default.TouchTrigger.onChange += OnTouchTriggerChanged;
         }
 
         private void OnDisable()
@@ -36,9 +39,10 @@ namespace L3_VR_SteamVR_Advanced.Scripts.GravityGun
             // Stop listening to events related to grabbing & releasing the gravity gun.
             gunInteractable.onAttachedToHand -= OnGunGrabbedInHand;
             gunInteractable.onDetachedFromHand -= OnGunReleasedFromHand;
-         
+
             //  TODO 3.1 : Don't forget to unsubscribe from the events if you've implemented the event-based mechanism!
-            
+            SteamVR_Actions._default.X_Pressed.onChange += OnXPressedChanged;
+            SteamVR_Actions._default.TouchTrigger.onChange += OnTouchTriggerChanged;
         }
 
         private void OnGunGrabbedInHand(Hand hand)
@@ -51,7 +55,30 @@ namespace L3_VR_SteamVR_Advanced.Scripts.GravityGun
             _isGunGrabbed = false;
             TossObject();
         }
-        
+
+        private void OnXPressedChanged(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource, bool XPressedState)
+        {
+            if (_isGunGrabbed && XPressedState) 
+            {
+                ThrowObject();
+            }
+        }
+
+        private void OnTouchTriggerChanged(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource, bool touchTriggerState)
+        {
+            if (_isGunGrabbed)
+            {
+                if (touchTriggerState)
+                {
+                    SnapObject();
+                }
+                else
+                {
+                    TossObject();
+                }
+            }
+        }
+
         private void Update()
         {
             ResetLaserBeam();
@@ -128,8 +155,9 @@ namespace L3_VR_SteamVR_Advanced.Scripts.GravityGun
         /// </summary>
         private void SnapObject()
         {
-            if(_selectedObject == null) return;
-            
+            if (_selectedObject == null) return;
+
+            Debug.Log("Snap object");
             _selectedObject.Rigidbody.isKinematic = true;
             _selectedObject.SetParent(snapTransform);
             _selectedObject.IsSnapped = true;
@@ -168,6 +196,7 @@ namespace L3_VR_SteamVR_Advanced.Scripts.GravityGun
         /// </summary>
         private void TossObject()
         {
+            Debug.Log("Toss object");
             ReleaseObject(applyThrowForce: false);
         }
 
@@ -176,13 +205,14 @@ namespace L3_VR_SteamVR_Advanced.Scripts.GravityGun
         /// </summary>
         private void ThrowObject()
         {
+            Debug.Log("Throw object");
             ReleaseObject(applyThrowForce: true);
         }
 
         private void ReleaseObject(bool applyThrowForce)
         {
-            if(_selectedObject == null) return;
-            
+            if (_selectedObject == null) return;
+
             _selectedObject.Rigidbody.isKinematic = false;
             _selectedObject.IsSnapped = false;
             _selectedObject.ResetParent();

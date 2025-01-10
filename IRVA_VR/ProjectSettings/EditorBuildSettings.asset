@@ -12,4 +12,5 @@ EditorBuildSettings:
     path: Assets/L1_VR_GoogleCardboard/Scenes/L1_VR_GoogleCardboard_BalloonPopper.unity
     guid: dc2b59be1a27f594ea1b880cd89069e4
   m_configObjects:
+    Unity.XR.OpenVR.Settings: {fileID: 11400000, guid: 6a0da224fed3acd47b56b353cb64151c, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: d5c0039dbc8a2f341a50de56dd5b8cbd, type: 2}
