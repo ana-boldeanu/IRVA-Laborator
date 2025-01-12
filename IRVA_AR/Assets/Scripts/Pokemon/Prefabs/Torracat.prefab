@@ -21,17 +21,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 54e1c6152e2ba2f4083a6ec521a90e94,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.5
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 54e1c6152e2ba2f4083a6ec521a90e94,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.5
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 54e1c6152e2ba2f4083a6ec521a90e94,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.5
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 54e1c6152e2ba2f4083a6ec521a90e94,
         type: 3}
@@ -119,3 +119,4 @@ MonoBehaviour:
   mood: 2
   level: 5
   experience: 80
+  localHeadPosition: {x: 0, y: 0, z: 0}
