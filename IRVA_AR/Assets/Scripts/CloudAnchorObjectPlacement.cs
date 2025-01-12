@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.XR.ARFoundation;
@@ -9,7 +10,7 @@ using static UnityEngine.GraphicsBuffer;
 [RequireComponent(typeof(ARRaycastManager))]
 public class CloudAnchorObjectPlacement : MonoBehaviour
 {
-    public GameObject spawnedObject { get; private set; }
+    public GameObject[] spawnedObjects = new GameObject[] { null, null, null, null };
     public Camera FirstPersonCamera;
 
     static List<ARRaycastHit> s_Hits = new List<ARRaycastHit>();
@@ -29,7 +30,6 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
         }
 
         m_RaycastManager = GetComponent<ARRaycastManager>();
-        spawnedObject = null;
     }
 
     bool TryGetTouchPosition(out Vector2 touchPosition)
@@ -59,8 +59,7 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
 
     void Update()
     {
-        /* Add only one cube on scene */
-        if (spawnedObject != null)
+        if (spawnedObjects[PokemonGameManager.Instance.selectedIndex] != null)
             return;
 
         if (!TryGetTouchPosition(out Vector2 touchPosition))
@@ -72,9 +71,12 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
 
             /* TODO 2.1. Instantiate a new prefab on scene */
             GameObject prefab = PokemonGameManager.Instance.GetSelectedPokemon();
+
             Vector3 direction = hitPose.position - FirstPersonCamera.transform.position;
             Quaternion lookAtRotation = Quaternion.Euler(0, Quaternion.LookRotation(direction).eulerAngles.y, 0);
-            spawnedObject = Instantiate(prefab, hitPose.position, lookAtRotation * Quaternion.Euler(0, 180, 0));
+            GameObject spawnedObject = Instantiate(prefab, hitPose.position, lookAtRotation * Quaternion.Euler(0, 180, 0));
+
+            spawnedObjects[PokemonGameManager.Instance.selectedIndex] = spawnedObject;
 
             /* TODO 2.2 Attach an anchor to the prefab */
             ARAnchor anchor = spawnedObject.AddComponent<ARAnchor>();
@@ -86,16 +88,21 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
     }
 
     /* Add the object on scene after the anchor has been resolved */
-    public void RecreatePlacement(Transform transform, GameObject prefab)
+    public void RecreatePlacement(Transform transform, int pokemonIndex)
     {
-        spawnedObject = Instantiate(prefab, transform.position, transform.rotation);
+        GameObject prefab = PokemonGameManager.Instance.pokemonPrefabs[pokemonIndex];
+        GameObject spawnedObject = Instantiate(prefab, transform.position, transform.rotation);
         spawnedObject.transform.parent = transform;
+
+        spawnedObjects[pokemonIndex] = spawnedObject;
     }
 
     public void RemovePlacement()
     {
         /* TODO 4 Remove the cube from screen */
-        Destroy(spawnedObject);
-        spawnedObject= null;
+        int index = PokemonGameManager.Instance.selectedIndex;
+
+        Destroy(spawnedObjects[index]);
+        spawnedObjects[index] = null;
     }
 }

@@ -8,7 +8,7 @@ public class PokemonGameManager : MonoBehaviour
     public GameObject[] pokemonPrefabs;
     public TextMeshProUGUI selectedPokemonText;
 
-    private int selectedIndex = 0;
+    public int selectedIndex = 0;
 
     public static PokemonGameManager Instance { get; private set; }
 

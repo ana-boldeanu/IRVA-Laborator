@@ -36,7 +36,7 @@ public class ARCloudAnchorManager : MonoBehaviour
         }
 
         anchorCreatedEvent = new AnchorCreatedEvent();
-        anchorCreatedEvent.AddListener((t) => CloudAnchorObjectPlacement.Instance.RecreatePlacement(t, PokemonGameManager.Instance.GetSelectedPokemon()));
+        anchorCreatedEvent.AddListener((t) => CloudAnchorObjectPlacement.Instance.RecreatePlacement(t, PokemonGameManager.Instance.selectedIndex));
     }
 
     private Pose GetCameraPose()
