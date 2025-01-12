@@ -4,6 +4,7 @@ using UnityEngine.Events;
 using UnityEngine.XR.ARFoundation;
 using Google.XR.ARCoreExtensions;
 using TMPro;
+using System.Collections.Generic;
 
 public class AnchorCreatedEvent : UnityEvent<Transform> { }
 
@@ -18,11 +19,12 @@ public class ARCloudAnchorManager : MonoBehaviour
 
     private ARAnchorManager  arAnchorManager = null;
     private ARAnchor pendingHostAnchor = null;
-    private string anchorIdToResolve;
     private AnchorCreatedEvent anchorCreatedEvent = null;
     public static ARCloudAnchorManager Instance { get; private set; }
     public GameObject middle;
     public GameObject main;
+
+    private string[] anchorIdsToResolve = new string[] { null, null, null, null };
 
     private void Awake()
     {
@@ -73,6 +75,14 @@ public class ARCloudAnchorManager : MonoBehaviour
 
     public void Resolve()
     {
+        string anchorIdToResolve = anchorIdsToResolve[PokemonGameManager.Instance.selectedIndex];
+
+        if (anchorIdToResolve == null)
+        {
+            StartCoroutine(DisplayStatus("This pokemon has not been hosted yet!"));
+            return;
+        }
+
         StartCoroutine(DisplayStatus("Resolve call in progress"));
 
         /* TODO 5 Start the resolve process and wait for the promise */
@@ -95,7 +105,7 @@ public class ARCloudAnchorManager : MonoBehaviour
 
         if (result.CloudAnchorState == CloudAnchorState.Success)
         {
-            anchorIdToResolve = result.CloudAnchorId;
+            anchorIdsToResolve[PokemonGameManager.Instance.selectedIndex] = result.CloudAnchorId;
             StartCoroutine(DisplayStatus("Anchor hosted successfully!"));
         }
         else

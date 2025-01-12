@@ -1,11 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
-using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(ARRaycastManager))]
 public class CloudAnchorObjectPlacement : MonoBehaviour
