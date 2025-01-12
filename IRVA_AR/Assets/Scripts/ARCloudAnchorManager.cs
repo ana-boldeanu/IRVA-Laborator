@@ -131,6 +131,7 @@ public class ARCloudAnchorManager : MonoBehaviour
             StartCoroutine(DisplayStatus(PokemonGameManager.Instance.GetSelectedPokemon().name + " resolved successfully!"));
 
             // Start pokemon battle
+            PokemonGameManager.Instance.StartPokemonBattle(PokemonGameManager.Instance.selectedIndex, pokemonIndex);
         }
         else
         {

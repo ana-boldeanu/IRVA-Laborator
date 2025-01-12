@@ -48,10 +48,27 @@ public class PokemonGameManager : MonoBehaviour
         if (spawnedPokemon != null)
         {
             Vector3 worldPosition = spawnedPokemon.transform.position;
-            Vector3 offset = spawnedPokemon.GetComponent<PokemonController>().localHeadPosition; 
-            pokemonStatsParent.transform.position = Camera.main.WorldToScreenPoint(worldPosition + offset + new Vector3(-0.4f, 0.2f, 0));
-            fightersParent.transform.position = Camera.main.WorldToScreenPoint(worldPosition + offset + new Vector3(0.4f, 0.2f, 0));
+            Vector3 horizontalOffset = new(350, 0, 0);
+            Vector3 verticalOffset = new(0, 200, 0);
+            pokemonStatsParent.transform.position = Camera.main.WorldToScreenPoint(worldPosition) - horizontalOffset + verticalOffset;
+            fightersParent.transform.position = Camera.main.WorldToScreenPoint(worldPosition) + horizontalOffset + verticalOffset;
         }
+    }
+
+    public void StartPokemonBattle(int fighter1, int fighter2)
+    {
+        StartCoroutine(ARCloudAnchorManager.Instance.DisplayStatus("The fight is about to begin!"));
+
+        pokemonStatsParent.SetActive(false);
+        fightersParent.SetActive(false);
+
+        PokemonController pokemon1 = CloudAnchorObjectPlacement.Instance.spawnedObjects[fighter1].GetComponent<PokemonController>();
+        PokemonController pokemon2 = CloudAnchorObjectPlacement.Instance.spawnedObjects[fighter2].GetComponent<PokemonController>();
+
+        // Rotate pokemon towards each other
+        Vector3 direction = pokemon2.transform.position - pokemon1.transform.position;
+        pokemon1.transform.rotation = Quaternion.Euler(0, Quaternion.LookRotation(direction).eulerAngles.y, 0);
+        pokemon2.transform.rotation = Quaternion.Euler(0, Quaternion.LookRotation(-direction).eulerAngles.y, 0);
     }
 
     public GameObject GetSelectedPokemon()
