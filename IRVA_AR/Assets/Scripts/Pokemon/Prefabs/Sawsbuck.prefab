@@ -78,6 +78,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6486107019671968244, guid: 78ab6b46f6759214da2ad0b057cbf85a,
+        type: 3}
+      propertyPath: m_TagString
+      value: Head Model
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 78ab6b46f6759214da2ad0b057cbf85a,
         type: 3}
       propertyPath: m_Name
@@ -111,3 +116,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
+  mood: 0
+  level: 3
+  experience: 10

@@ -8,6 +8,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8716909100834334265, guid: 54e1c6152e2ba2f4083a6ec521a90e94,
+        type: 3}
+      propertyPath: m_TagString
+      value: Head Model
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 54e1c6152e2ba2f4083a6ec521a90e94,
         type: 3}
       propertyPath: m_RootOrder
@@ -111,3 +116,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isSelected: 0
+  mood: 2
+  level: 5
+  experience: 80

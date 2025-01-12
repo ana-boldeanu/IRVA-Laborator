@@ -74,6 +74,7 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
             GameObject spawnedObject = Instantiate(prefab, hitPose.position, lookAtRotation * Quaternion.Euler(0, 180, 0));
 
             spawnedObjects[PokemonGameManager.Instance.selectedIndex] = spawnedObject;
+            PokemonGameManager.Instance.SetPokemonStats();
 
             /* TODO 2.2 Attach an anchor to the prefab */
             ARAnchor anchor = spawnedObject.AddComponent<ARAnchor>();
@@ -98,6 +99,7 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
     {
         /* TODO 4 Remove the cube from screen */
         int index = PokemonGameManager.Instance.selectedIndex;
+        PokemonGameManager.Instance.pokemonStatsParent.SetActive(false);
 
         Destroy(spawnedObjects[index]);
         spawnedObjects[index] = null;

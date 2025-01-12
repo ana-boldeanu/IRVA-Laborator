@@ -61,7 +61,7 @@ public class ARCloudAnchorManager : MonoBehaviour
     {
         /* TODO 3.1 Get FeatureMapQuality */
         FeatureMapQuality quality = arAnchorManager.EstimateFeatureMapQualityForHosting(GetCameraPose());
-        StartCoroutine(DisplayStatus("HostAnchor call in progress. Feature Map Quality: " + quality));
+        StartCoroutine(DisplayStatus("Feature Map Quality: " + quality));
 
         if (quality != FeatureMapQuality.Insufficient)
         {
@@ -106,7 +106,7 @@ public class ARCloudAnchorManager : MonoBehaviour
         if (result.CloudAnchorState == CloudAnchorState.Success)
         {
             anchorIdsToResolve[PokemonGameManager.Instance.selectedIndex] = result.CloudAnchorId;
-            StartCoroutine(DisplayStatus("Anchor hosted successfully!"));
+            StartCoroutine(DisplayStatus(PokemonGameManager.Instance.GetSelectedPokemon().name +  " hosted successfully!"));
         }
         else
         {
@@ -128,11 +128,11 @@ public class ARCloudAnchorManager : MonoBehaviour
         if (result.CloudAnchorState == CloudAnchorState.Success)
         {
             anchorCreatedEvent?.Invoke(result.Anchor.transform);
-            StartCoroutine(DisplayStatus("Anchor resolved successfully!"));
+            StartCoroutine(DisplayStatus(PokemonGameManager.Instance.GetSelectedPokemon().name + " resolved successfully!"));
         }
         else
         {
-            StartCoroutine(DisplayStatus("Error while resolving cloud anchor"));
+            StartCoroutine(DisplayStatus("Error while resolving cloud anchor" + result.CloudAnchorState));
         }
     }
 }
