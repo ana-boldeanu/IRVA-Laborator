@@ -16,6 +16,11 @@ public class PokemonGameManager : MonoBehaviour
     public Slider pokemonXPSlider;
     public GameObject[] pokemonMoods;
 
+    // Pokemon fighters screen
+    public GameObject fightersParent;
+    public TextMeshProUGUI[] pokemonFighterNamesText;
+    public TextMeshProUGUI[] pokemonFighterLevelsText;
+
     public static PokemonGameManager Instance { get; private set; }
 
     private void Awake()
@@ -34,6 +39,7 @@ public class PokemonGameManager : MonoBehaviour
     {
         selectedPokemonText.text = pokemonPrefabs[selectedIndex].name;
         pokemonStatsParent.SetActive(false);
+        fightersParent.SetActive(false);
     }
 
     void Update()
@@ -42,8 +48,9 @@ public class PokemonGameManager : MonoBehaviour
         if (spawnedPokemon != null)
         {
             Vector3 worldPosition = spawnedPokemon.transform.position;
-            Vector3 offset = spawnedPokemon.GetComponent<PokemonController>().localHeadPosition + new Vector3(-0.4f, 0.2f , 0); 
-            pokemonStatsParent.transform.position = Camera.main.WorldToScreenPoint(worldPosition + offset);
+            Vector3 offset = spawnedPokemon.GetComponent<PokemonController>().localHeadPosition; 
+            pokemonStatsParent.transform.position = Camera.main.WorldToScreenPoint(worldPosition + offset + new Vector3(-0.4f, 0.2f, 0));
+            fightersParent.transform.position = Camera.main.WorldToScreenPoint(worldPosition + offset + new Vector3(0.4f, 0.2f, 0));
         }
     }
 
@@ -65,6 +72,47 @@ public class PokemonGameManager : MonoBehaviour
         }
     }
 
+    public void ButtonFight()
+    {
+        fightersParent.SetActive(true);
+
+        int boxIndex = 0;
+
+        for (int i = 0; i < 4; ++i)
+        {
+            if (selectedIndex == i)
+            {
+                continue;
+            }
+
+            if (ARCloudAnchorManager.Instance.anchorIdsToResolve[i] != string.Empty)
+            {
+                pokemonFighterNamesText[boxIndex].text = pokemonPrefabs[i].name;
+                pokemonFighterLevelsText[boxIndex].text = pokemonPrefabs[i].GetComponent<PokemonController>().level.ToString();
+                boxIndex++;
+            }
+        }
+
+        for (int i = boxIndex; i < 3; ++i)
+        {
+            pokemonFighterNamesText[i].text = "";
+            pokemonFighterLevelsText[i].text = "";
+        }
+    }
+
+    public void ButtonChosenFighter(int i)
+    {
+        for (int  j = 0; j < 4; j++)
+        {
+            if (pokemonPrefabs[j].name == pokemonFighterNamesText[i].text)
+            {
+                StartCoroutine(ARCloudAnchorManager.Instance.DisplayStatus("About to battle " + pokemonFighterNamesText[i].text + "!"));
+
+                ARCloudAnchorManager.Instance.Resolve(j);
+            }
+        }
+    }
+
     public void ButtonSelectNextPokemon()
     {
         selectedIndex++;
@@ -73,6 +121,7 @@ public class PokemonGameManager : MonoBehaviour
             selectedIndex = 0;
 
         selectedPokemonText.text = pokemonPrefabs[selectedIndex].name;
+        PokemonGameManager.Instance.fightersParent.SetActive(false);
 
         if (CloudAnchorObjectPlacement.Instance.spawnedObjects[selectedIndex] != null)
         {
@@ -88,6 +137,7 @@ public class PokemonGameManager : MonoBehaviour
             selectedIndex = pokemonPrefabs.Length - 1;
 
         selectedPokemonText.text = pokemonPrefabs[selectedIndex].name;
+        PokemonGameManager.Instance.fightersParent.SetActive(false);
 
         if (CloudAnchorObjectPlacement.Instance.spawnedObjects[selectedIndex] != null)
         {

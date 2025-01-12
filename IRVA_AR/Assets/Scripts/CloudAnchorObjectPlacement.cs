@@ -88,6 +88,12 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
     /* Add the object on scene after the anchor has been resolved */
     public void RecreatePlacement(Transform transform, int pokemonIndex)
     {
+        if (spawnedObjects[pokemonIndex] != null)
+        {
+            StartCoroutine(ARCloudAnchorManager.Instance.DisplayStatus("This pokemon is already in place!"));
+            return;
+        }
+
         GameObject prefab = PokemonGameManager.Instance.pokemonPrefabs[pokemonIndex];
         GameObject spawnedObject = Instantiate(prefab, transform.position, transform.rotation);
         spawnedObject.transform.parent = transform;
@@ -100,6 +106,7 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
         /* TODO 4 Remove the cube from screen */
         int index = PokemonGameManager.Instance.selectedIndex;
         PokemonGameManager.Instance.pokemonStatsParent.SetActive(false);
+        PokemonGameManager.Instance.fightersParent.SetActive(false);
 
         Destroy(spawnedObjects[index]);
         spawnedObjects[index] = null;

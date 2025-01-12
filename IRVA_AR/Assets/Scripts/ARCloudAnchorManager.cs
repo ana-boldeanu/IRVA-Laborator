@@ -6,7 +6,7 @@ using Google.XR.ARCoreExtensions;
 using TMPro;
 using System.Collections.Generic;
 
-public class AnchorCreatedEvent : UnityEvent<Transform> { }
+public class AnchorCreatedEvent : UnityEvent<Transform, int> { }
 
 /* TODO 1. Enable ARCore Cloud Anchors API on Google Cloud Platform */
 public class ARCloudAnchorManager : MonoBehaviour
@@ -24,7 +24,7 @@ public class ARCloudAnchorManager : MonoBehaviour
     public GameObject middle;
     public GameObject main;
 
-    private string[] anchorIdsToResolve = new string[] { null, null, null, null };
+    public string[] anchorIdsToResolve = new string[] { string.Empty, string.Empty, string.Empty, string.Empty };
 
     private void Awake()
     {
@@ -38,7 +38,7 @@ public class ARCloudAnchorManager : MonoBehaviour
         }
 
         anchorCreatedEvent = new AnchorCreatedEvent();
-        anchorCreatedEvent.AddListener((t) => CloudAnchorObjectPlacement.Instance.RecreatePlacement(t, PokemonGameManager.Instance.selectedIndex));
+        anchorCreatedEvent.AddListener((t, idx) => CloudAnchorObjectPlacement.Instance.RecreatePlacement(t, idx));
     }
 
     private Pose GetCameraPose()
@@ -73,11 +73,11 @@ public class ARCloudAnchorManager : MonoBehaviour
         }
     }
 
-    public void Resolve()
+    public void Resolve(int pokemonIndex)
     {
-        string anchorIdToResolve = anchorIdsToResolve[PokemonGameManager.Instance.selectedIndex];
+        string anchorIdToResolve = anchorIdsToResolve[pokemonIndex];
 
-        if (anchorIdToResolve == null)
+        if (anchorIdToResolve == string.Empty)
         {
             StartCoroutine(DisplayStatus("This pokemon has not been hosted yet!"));
             return;
@@ -88,7 +88,7 @@ public class ARCloudAnchorManager : MonoBehaviour
         /* TODO 5 Start the resolve process and wait for the promise */
         ResolveCloudAnchorPromise cloudAnchorPromise = arAnchorManager.ResolveCloudAnchorAsync(anchorIdToResolve);
 
-        StartCoroutine(WaitResolvingResult(cloudAnchorPromise));
+        StartCoroutine(WaitResolvingResult(cloudAnchorPromise, pokemonIndex));
     }
 
     private IEnumerator WaitHostingResult(HostCloudAnchorPromise hostingPromise)
@@ -114,7 +114,7 @@ public class ARCloudAnchorManager : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitResolvingResult(ResolveCloudAnchorPromise resolvePromise)
+    private IEnumerator WaitResolvingResult(ResolveCloudAnchorPromise resolvePromise, int pokemonIndex)
     {
         yield return resolvePromise;
 
@@ -127,8 +127,10 @@ public class ARCloudAnchorManager : MonoBehaviour
 
         if (result.CloudAnchorState == CloudAnchorState.Success)
         {
-            anchorCreatedEvent?.Invoke(result.Anchor.transform);
+            anchorCreatedEvent?.Invoke(result.Anchor.transform, pokemonIndex);
             StartCoroutine(DisplayStatus(PokemonGameManager.Instance.GetSelectedPokemon().name + " resolved successfully!"));
+
+            // Start pokemon battle
         }
         else
         {
