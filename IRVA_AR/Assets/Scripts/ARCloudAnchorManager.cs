@@ -23,6 +23,7 @@ public class ARCloudAnchorManager : MonoBehaviour
     public static ARCloudAnchorManager Instance { get; private set; }
     public GameObject middle;
     public GameObject main;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -35,7 +36,7 @@ public class ARCloudAnchorManager : MonoBehaviour
         }
 
         anchorCreatedEvent = new AnchorCreatedEvent();
-        anchorCreatedEvent.AddListener((t) => CloudAnchorObjectPlacement.Instance.RecreatePlacement(t));
+        anchorCreatedEvent.AddListener((t) => CloudAnchorObjectPlacement.Instance.RecreatePlacement(t, PokemonGameManager.Instance.GetSelectedPokemon()));
     }
 
     private Pose GetCameraPose()

@@ -4,25 +4,16 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(ARRaycastManager))]
 public class CloudAnchorObjectPlacement : MonoBehaviour
 {
-    /// <summary>
-    /// The object instantiated as a result of a successful raycast intersection with a plane.
-    /// </summary>
     public GameObject spawnedObject { get; private set; }
-
-    /// <summary>
-    /// The first-person camera being used to render the passthrough camera image (i.e. AR
-    /// background).
-    /// </summary>
     public Camera FirstPersonCamera;
 
-    /// <summary>
-    /// A prefab to place an object when a raycast from a user touch hits a plane.
-    /// </summary>
-    public GameObject prefab;
+    static List<ARRaycastHit> s_Hits = new List<ARRaycastHit>();
+    ARRaycastManager m_RaycastManager;
 
     public static CloudAnchorObjectPlacement Instance { get; private set; }
 
@@ -66,7 +57,6 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
         return false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         /* Add only one cube on scene */
@@ -81,7 +71,10 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
             var hitPose = s_Hits[0].pose;
 
             /* TODO 2.1. Instantiate a new prefab on scene */
-            spawnedObject = Instantiate(prefab, hitPose.position, hitPose.rotation);
+            GameObject prefab = PokemonGameManager.Instance.GetSelectedPokemon();
+            Vector3 direction = hitPose.position - FirstPersonCamera.transform.position;
+            Quaternion lookAtRotation = Quaternion.Euler(0, Quaternion.LookRotation(direction).eulerAngles.y, 0);
+            spawnedObject = Instantiate(prefab, hitPose.position, lookAtRotation * Quaternion.Euler(0, 180, 0));
 
             /* TODO 2.2 Attach an anchor to the prefab */
             ARAnchor anchor = spawnedObject.AddComponent<ARAnchor>();
@@ -93,7 +86,7 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
     }
 
     /* Add the object on scene after the anchor has been resolved */
-    public void RecreatePlacement(Transform transform)
+    public void RecreatePlacement(Transform transform, GameObject prefab)
     {
         spawnedObject = Instantiate(prefab, transform.position, transform.rotation);
         spawnedObject.transform.parent = transform;
@@ -105,7 +98,4 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
         Destroy(spawnedObject);
         spawnedObject= null;
     }
-
-    static List<ARRaycastHit> s_Hits = new List<ARRaycastHit>();
-    ARRaycastManager m_RaycastManager;
 }
