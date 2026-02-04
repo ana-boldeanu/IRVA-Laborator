@@ -1,14 +1,19 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR.ARFoundation;
 
 public class PokemonGameManager : MonoBehaviour
 {
     public GameObject[] pokemonPrefabs;
     public int selectedIndex = 1;
+    public ARTrackedImageManager aRTrackedImageManager;
+    public bool isInCatchMode = false;
 
     // UI
     public TextMeshProUGUI selectedPokemonText;
+    public GameObject playModeUI;
+    public GameObject fightModeUI;
 
     // Pokemon stats
     public GameObject pokemonStatsParent;
@@ -20,6 +25,9 @@ public class PokemonGameManager : MonoBehaviour
     public GameObject fightersParent;
     public TextMeshProUGUI[] pokemonFighterNamesText;
     public TextMeshProUGUI[] pokemonFighterLevelsText;
+
+    // Scan
+    public TextMeshProUGUI scanText;
 
     public static PokemonGameManager Instance { get; private set; }
 
@@ -40,6 +48,8 @@ public class PokemonGameManager : MonoBehaviour
         selectedPokemonText.text = pokemonPrefabs[selectedIndex].name;
         pokemonStatsParent.SetActive(false);
         fightersParent.SetActive(false);
+        aRTrackedImageManager.GetComponent<ARTrackedImageManager>().enabled = false;
+        fightModeUI.SetActive(false);
     }
 
     void Update()
@@ -58,9 +68,8 @@ public class PokemonGameManager : MonoBehaviour
     public void StartPokemonBattle(int fighter1, int fighter2)
     {
         StartCoroutine(ARCloudAnchorManager.Instance.DisplayStatus("The fight is about to begin!"));
-
-        pokemonStatsParent.SetActive(false);
-        fightersParent.SetActive(false);
+        fightModeUI.SetActive(true);
+        playModeUI.SetActive(false);
 
         PokemonController pokemon1 = CloudAnchorObjectPlacement.Instance.spawnedObjects[fighter1].GetComponent<PokemonController>();
         PokemonController pokemon2 = CloudAnchorObjectPlacement.Instance.spawnedObjects[fighter2].GetComponent<PokemonController>();
@@ -74,6 +83,19 @@ public class PokemonGameManager : MonoBehaviour
     public GameObject GetSelectedPokemon()
     {
         return pokemonPrefabs[selectedIndex];
+    }
+
+    public void ButtonToggleARTrackedImageManager()
+    {
+        isInCatchMode = !isInCatchMode;
+        aRTrackedImageManager.GetComponent<ARTrackedImageManager>().enabled = isInCatchMode;
+        scanText.text = isInCatchMode ? "Exit" : "Scan";
+        playModeUI.SetActive(!isInCatchMode);
+
+        if (isInCatchMode)
+        {
+            StartCoroutine(ARCloudAnchorManager.Instance.DisplayStatus("Scan a pokemon trading card!"));
+        }
     }
 
     public void ButtonSelectPokemon()

@@ -59,6 +59,9 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
         if (spawnedObjects[PokemonGameManager.Instance.selectedIndex] != null)
             return;
 
+        if (PokemonGameManager.Instance.isInCatchMode)
+            return;
+
         if (!TryGetTouchPosition(out Vector2 touchPosition))
             return;
 
@@ -66,7 +69,7 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
         {
             var hitPose = s_Hits[0].pose;
 
-            /* TODO 2.1. Instantiate a new prefab on scene */
+            /* Instantiate a new prefab on scene */
             GameObject prefab = PokemonGameManager.Instance.GetSelectedPokemon();
 
             Vector3 direction = hitPose.position - FirstPersonCamera.transform.position;
@@ -76,7 +79,7 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
             spawnedObjects[PokemonGameManager.Instance.selectedIndex] = spawnedObject;
             PokemonGameManager.Instance.SetPokemonStats();
 
-            /* TODO 2.2 Attach an anchor to the prefab */
+            /* Attach an anchor to the prefab */
             ARAnchor anchor = spawnedObject.AddComponent<ARAnchor>();
             spawnedObject.transform.parent = anchor.transform;
 
@@ -103,7 +106,7 @@ public class CloudAnchorObjectPlacement : MonoBehaviour
 
     public void RemovePlacement()
     {
-        /* TODO 4 Remove the cube from screen */
+        /* Remove the pokemon from screen */
         int index = PokemonGameManager.Instance.selectedIndex;
         PokemonGameManager.Instance.pokemonStatsParent.SetActive(false);
         PokemonGameManager.Instance.fightersParent.SetActive(false);
