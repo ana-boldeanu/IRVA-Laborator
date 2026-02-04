@@ -46,7 +46,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: c1076de1f3cbb794fb3362efe98adc0d,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: -0.17364809
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c1076de1f3cbb794fb3362efe98adc0d,
         type: 3}
@@ -56,12 +56,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: c1076de1f3cbb794fb3362efe98adc0d,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.9848078
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c1076de1f3cbb794fb3362efe98adc0d,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c1076de1f3cbb794fb3362efe98adc0d,
         type: 3}
@@ -71,7 +71,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: c1076de1f3cbb794fb3362efe98adc0d,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c1076de1f3cbb794fb3362efe98adc0d,
         type: 3}
@@ -119,3 +119,4 @@ MonoBehaviour:
   mood: 1
   level: 2
   experience: 20
+  localHeadPosition: {x: 0, y: 0, z: 0}
